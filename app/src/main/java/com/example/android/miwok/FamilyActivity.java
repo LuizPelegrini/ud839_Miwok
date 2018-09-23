@@ -15,14 +15,18 @@
  */
 package com.example.android.miwok;
 
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
 public class FamilyActivity extends AppCompatActivity {
     private ArrayList<Word> words;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,14 +36,30 @@ public class FamilyActivity extends AppCompatActivity {
         int color = getResources().getColor(R.color.category_family);
 
         words = new ArrayList<>();
-        words.add(new Word("father", "ahsjahs", R.drawable.family_father));
-        words.add(new Word("mother", "sdsds", R.drawable.family_mother));
-        words.add(new Word("son", "sdsdsd", R.drawable.family_son));
-        words.add(new Word("daughter", "dfsdfs", R.drawable.family_daughter));
+        words.add(new Word("father", "ahsjahs", R.drawable.family_father, R.raw.family_father));
+        words.add(new Word("mother", "sdsds", R.drawable.family_mother, R.raw.family_mother));
+        words.add(new Word("son", "sdsdsd", R.drawable.family_son, R.raw.family_son));
+        words.add(new Word("daughter", "dfsdfs", R.drawable.family_daughter, R.raw.family_daughter));
 
         ListView listView = findViewById(R.id.list);
         WordAdapter adapter = new WordAdapter(this, words, color);
-
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(mediaPlayer != null) {
+                    if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                    } else {
+                        mediaPlayer.release();
+                    }
+                }
+//                Log.d("NumbersActivity", ((Word)parent.getItemAtPosition(position)).getEnglishTranslation());
+                mediaPlayer = MediaPlayer.create(FamilyActivity.this, words.get(position).getAudioResourceId());
+                mediaPlayer.start();
+            }
+        });
     }
 }
