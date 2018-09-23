@@ -30,6 +30,8 @@ public class PhrasesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_list);
 
+        int color = getResources().getColor(R.color.category_phrases);
+
         words = new ArrayList<>();
         words.add(new Word("phrase1", "lutti"));
         words.add(new Word("phrase2", "otiiko"));
@@ -43,7 +45,7 @@ public class PhrasesActivity extends AppCompatActivity {
         words.add(new Word("phrase10", "na\'aacha"));
 
         ListView listView = findViewById(R.id.list);
-        WordAdapter adapter = new WordAdapter(this, words);
+        WordAdapter adapter = new WordAdapter(this, words, color);
 
         listView.setAdapter(adapter);
     }

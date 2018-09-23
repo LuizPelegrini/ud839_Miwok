@@ -4,6 +4,7 @@ public class Word {
 
     private String _englishTranslation;
     private String _miwokiTranslation;
+    private int _imageResourceId = -1;
 
     public Word(String englishTranslation, String miwokiTranslation)
     {
@@ -11,6 +12,14 @@ public class Word {
         this._miwokiTranslation = miwokiTranslation;
     }
 
+    public Word(String englishTranslation, String miwokiTranslation, int imageResourceId)
+    {
+        this(englishTranslation, miwokiTranslation);
+        this._imageResourceId = imageResourceId;
+    }
+
+
+    //// GETTERS ////
     public String getEnglishTranslation() {
         return this._englishTranslation;
     }
@@ -19,11 +28,5 @@ public class Word {
         return this._miwokiTranslation;
     }
 
-    public void setEnglishTranslation(String englishTranslation) {
-        this._englishTranslation = englishTranslation;
-    }
-
-    public void setMiwokiTranslation(String miwokiTranslation) {
-        this._miwokiTranslation = miwokiTranslation;
-    }
+    public int getImageResourceId(){ return this._imageResourceId; }
 }

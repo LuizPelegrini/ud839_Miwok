@@ -29,14 +29,16 @@ public class FamilyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_list);
 
+        int color = getResources().getColor(R.color.category_family);
+
         words = new ArrayList<>();
-        words.add(new Word("father", "ahsjahs"));
-        words.add(new Word("mother", "sdsds"));
-        words.add(new Word("son", "sdsdsd"));
-        words.add(new Word("daughter", "dfsdfs"));
+        words.add(new Word("father", "ahsjahs", R.drawable.family_father));
+        words.add(new Word("mother", "sdsds", R.drawable.family_mother));
+        words.add(new Word("son", "sdsdsd", R.drawable.family_son));
+        words.add(new Word("daughter", "dfsdfs", R.drawable.family_daughter));
 
         ListView listView = findViewById(R.id.list);
-        WordAdapter adapter = new WordAdapter(this, words);
+        WordAdapter adapter = new WordAdapter(this, words, color);
 
         listView.setAdapter(adapter);
     }
