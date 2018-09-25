@@ -18,6 +18,7 @@ package com.example.android.miwok;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -48,18 +49,31 @@ public class FamilyActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(mediaPlayer != null) {
-                    if (mediaPlayer.isPlaying()) {
-                        mediaPlayer.stop();
-                        mediaPlayer.release();
-                    } else {
-                        mediaPlayer.release();
-                    }
-                }
+                releaseMediaPlayer();
 //                Log.d("NumbersActivity", ((Word)parent.getItemAtPosition(position)).getEnglishTranslation());
                 mediaPlayer = MediaPlayer.create(FamilyActivity.this, words.get(position).getAudioResourceId());
                 mediaPlayer.start();
+                mediaPlayer.setOnCompletionListener(onCompletionListener);
             }
         });
     }
+
+    private void releaseMediaPlayer()
+    {
+        if(mediaPlayer != null) {
+            if (mediaPlayer.isPlaying())
+                mediaPlayer.stop();
+
+            mediaPlayer.release();
+        }
+    }
+
+    public MediaPlayer.OnCompletionListener onCompletionListener = new MediaPlayer.OnCompletionListener() {
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+            releaseMediaPlayer();
+        }
+    };
+
+
 }
