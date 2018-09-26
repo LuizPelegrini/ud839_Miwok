@@ -15,6 +15,7 @@
  */
 package com.example.android.miwok;
 
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -76,6 +77,28 @@ public class ColorsActivity extends AppCompatActivity {
         @Override
         public void onCompletion(MediaPlayer mp) {
             releaseMediaPlayer();
+        }
+    };
+
+    public AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+        @Override
+        public void onAudioFocusChange(int focusChange) {
+            switch(focusChange)
+            {
+                // if the
+                case AudioManager.AUDIOFOCUS_GAIN:
+                    mediaPlayer.seekTo(0);
+                    mediaPlayer.start();
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS:
+                    releaseMediaPlayer();
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                    mediaPlayer.pause();
+                    break;
+
+            }
         }
     };
 
