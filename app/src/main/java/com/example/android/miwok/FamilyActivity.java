@@ -86,6 +86,13 @@ public class FamilyActivity extends AppCompatActivity {
                 mediaPlayer.stop();
 
             mediaPlayer.release();
+
+            mediaPlayer = null;
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                audioManager.abandonAudioFocusRequest(audioFocusRequest);
+            else
+                audioManager.abandonAudioFocus(onAudioFocusChangeListener);
         }
     }
 
