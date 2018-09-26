@@ -15,8 +15,12 @@
  */
 package com.example.android.miwok;
 
+import android.content.Context;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,13 +33,18 @@ import java.util.ArrayList;
 public class NumbersActivity extends AppCompatActivity {
 
     private ArrayList<Word> words;
-
     private MediaPlayer mediaPlayer;
+    private AudioFocusRequest audioFocusRequest;
+    private AudioManager audioManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_list);
+
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        createAudioFocusRequestObject();
 
         int color = getResources().getColor(R.color.category_numbers);
 
@@ -60,9 +69,19 @@ public class NumbersActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 releaseMediaPlayer();
 //                Log.d("NumbersActivity", ((Word)parent.getItemAtPosition(position)).getEnglishTranslation());
-                mediaPlayer = MediaPlayer.create(NumbersActivity.this, words.get(position).getAudioResourceId());
-                mediaPlayer.start();
-                mediaPlayer.setOnCompletionListener(onCompletionListener);
+
+                // Request focus (differently depending on the API level)
+                int res;
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    res = audioManager.requestAudioFocus(audioFocusRequest);
+                else
+                    res = audioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+
+                if(res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    mediaPlayer = MediaPlayer.create(NumbersActivity.this, words.get(position).getAudioResourceId());
+                    mediaPlayer.start();
+                    mediaPlayer.setOnCompletionListener(onCompletionListener);
+                }
             }
         });
     }
@@ -108,6 +127,26 @@ public class NumbersActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void createAudioFocusRequestObject()
+    {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            AudioAttributes audioAttributes;
+
+            // Build audio attributes to later provide to the audioFocusRequest object
+            audioAttributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .build();
+
+            // Build audioFocusRequest to later provide to the requestAudioFocus method of the AudioManager
+            audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+                    .setAudioAttributes(audioAttributes)
+                    .setAcceptsDelayedFocusGain(true)
+                    .setOnAudioFocusChangeListener(onAudioFocusChangeListener)
+                    .build();
+        }
+    }
 
     @Override
     protected void onStop() {

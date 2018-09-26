@@ -15,6 +15,7 @@
  */
 package com.example.android.miwok;
 
+import android.content.Context;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
@@ -39,6 +40,8 @@ public class FamilyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_list);
 
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
         createAudioFocusRequestObject();
 
         int color = getResources().getColor(R.color.category_family);
@@ -58,7 +61,7 @@ public class FamilyActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 releaseMediaPlayer();
 //                Log.d("NumbersActivity", ((Word)parent.getItemAtPosition(position)).getEnglishTranslation());
-                mediaPlayer = MediaPlayer.create(FamilyActivity.this, words.get(position).getAudioResourceId());
+
 
                 // Request focus (differently depending on the API level)
                 int res;
@@ -67,8 +70,11 @@ public class FamilyActivity extends AppCompatActivity {
                 else
                     res = audioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
 
-                mediaPlayer.start();
-                mediaPlayer.setOnCompletionListener(onCompletionListener);
+                if(res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    mediaPlayer = MediaPlayer.create(FamilyActivity.this, words.get(position).getAudioResourceId());
+                    mediaPlayer.start();
+                    mediaPlayer.setOnCompletionListener(onCompletionListener);
+                }
             }
         });
     }
