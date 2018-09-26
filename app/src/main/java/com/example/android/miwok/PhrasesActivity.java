@@ -80,4 +80,10 @@ public class PhrasesActivity extends AppCompatActivity {
             releaseMediaPlayer();
         }
     };
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        releaseMediaPlayer();
+    }
 }
